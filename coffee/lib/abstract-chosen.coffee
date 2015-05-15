@@ -20,6 +20,7 @@ class AbstractChosen
     @mouse_on_container = false
     @results_showing = false
     @result_highlighted = null
+    @show_value_as_label = @options.show_value_as_label || false
     @allow_single_deselect = if @options.allow_single_deselect? and @form_field.options[0]? and @form_field.options[0].text is "" then @options.allow_single_deselect else false
     @disable_search_threshold = @options.disable_search_threshold || 0
     @disable_search = @options.disable_search || false
@@ -43,11 +44,17 @@ class AbstractChosen
 
     @results_none_found = @form_field.getAttribute("data-no_results_text") || @options.no_results_text || AbstractChosen.default_no_result_text
 
+  choice_filter: (item) ->
+    if @show_value_as_label
+       item.value
+    else
+       item.html
+
   choice_label: (item) ->
     if @include_group_label_in_selected and item.group_label?
-      "<b class='group-name'>#{item.group_label}</b>#{item.html}"
+      "<b class='group-name'>#{item.group_label}</b>#{this.choice_filter(item)}"
     else
-      item.html
+      this.choice_filter(item)
 
   mouse_enter: -> @mouse_on_container = true
   mouse_leave: -> @mouse_on_container = false
